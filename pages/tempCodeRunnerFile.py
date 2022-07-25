@@ -1,0 +1,1 @@
+prediction = svc.predict(sc_arr)
