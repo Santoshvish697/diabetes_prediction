@@ -163,7 +163,6 @@ def rf_classifier(perm):
     rfc.fit(X_train,Y_train_arr) 
     # Overfitted
     y_train_rfc = rfc.predict(X_train)
-    # print("TRAINING Accuracy Score = {}%".format(metrics.accuracy_score(Y_train,y_train_rfc)*100))
     print("\n-----RANDOM FOREST ALGORITHM-----\n")
     rfc_cv = hyper_param_model(rfc)
     print("RFC Score = {}%".format(rfc.score(X_test,Y_test)*100))
@@ -349,6 +348,7 @@ def hyper_logreg(model):
 # ## 4. SVM Model
 
 def sv_classifier():
+    print("--------SVC Classifier--------\n")
     Q1 = df.quantile(0.25)
     Q3 = df.quantile(0.75)
     IQR = Q3 - Q1
@@ -365,7 +365,7 @@ def sv_classifier():
     classifier.fit(x_train_svc,y_train_arr_svc)
     # Hyperparameter Tuning
     param_grid = {'C': [0.1,1, 10, 100], 'gamma': [1,0.1,0.01,0.001],'kernel': ['rbf']}
-    grid = GridSearchCV(classifier,param_grid,refit = True, verbose = 2)
+    grid = GridSearchCV(classifier,param_grid,refit = True, verbose = 0)
     grid.fit(x_train_svc,y_train_arr_svc)
     grid_cv = grid.best_estimator_
     grid_prediction = grid_cv.predict(x_test_svc)
