@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from Final_ML_Analysis_LR_DEC_RF_SVM import *
 import fontstyle
-
+from datetime import date
 
 
 # pickle_in = open('rf_classifier.pkl','rb')
@@ -27,10 +27,11 @@ bmi = st.number_input("Body mass index (weight in kg/(height in m)^2):",value = 
 dpf = st.number_input("Diabetes Pedigree Function:",value = 0.0,min_value=0.0)
 age = st.number_input("Age:",value = 21,min_value = 21)
 
+
+
 sc_x = StandardScaler()
 input_arr = np.array([pregnancy,glucose,bp,skin,insulin,bmi,dpf,age]).reshape(-1,1)
-sc_arr = sc_x.fit_transform(input_arr)
-sc_arr = sc_arr.reshape(1,8)
+sc_arr = input_arr.reshape(1,8)
 
 submit = st.button('Predict')
 if submit:

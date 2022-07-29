@@ -14,21 +14,34 @@ st.set_page_config(
     page_title="Dashboard", page_icon="📊", initial_sidebar_state="expanded"
 )
 
-def max_width():
+# def max_width():
 
-    max_width_str = f"max-width: 1400px;"
-    st.markdown(
-     f"""
-    <style>
-    .reportview-container .main .block-container{{
-        {max_width_str}
-    }}
-    </style>    
-    """,
-        unsafe_allow_html=True,
-    )
+#     max_width_str = f"max-width: 1400px;"
+#     st.markdown(
+#      f"""
+#     <style>
+#     .reportview-container .main .block-container{{
+#         {max_width_str}
+#     }}
+#     </style>    
+#     """,
+#         unsafe_allow_html=True,
+#     )
 
-max_width()
+# max_width()
+co1,co2,col3,col4 = st.columns([1,1,4,1])
+with col3:
+        components.html("""<html>
+    <body>
+    <div style = "background-color:red;margin:0 auto;width:100%;height:100px;text-align: center;padding:3rem;line-height:50px;">
+    <h2 style= "margin:0 auto;color:white;position:relative;right:35px;">
+    Prediction
+
+    Positive</h2>
+    </div>
+    </body>
+    </html>""", width=200, height=200)
+
 
 with st.expander("👤- User", expanded=True):
     col1,col2,col3,col4,col5 = st.columns([2,2,2,2,3])
@@ -49,7 +62,7 @@ st.write(
 """
 )
 
-left_column,mid_column,right_column,predictor_col = st.columns([2.5,1,4,2])
+left_column,mid_column,right_column = st.columns([2.5,1,8])
 
 if __name__ == "__main__":
 
@@ -90,17 +103,7 @@ if __name__ == "__main__":
         # if rf_classifier(perm) == 1:
         image_fimp = Image.open('pages/images/f_imp.png')
         st.image(image_fimp)
+
+        img_plot = Image.open('pages/images/plot.png')
+        st.image(img_plot)
         print("SUCCESS!\n")
-
-    with predictor_col:
-        components.html("""<html>
-        <body>
-        <div style = "background-color:#cfc; padding: 5rem;border: 1rem solid black;margin:10px;height:500px;padding-bottom:2rem;">
-        <h2 style= "text-align:center;position:relative;right:4rem;bottom:3rem;margin:auto;text-align: center;color:red;">
-        Prediction:
-
-        Positive</h2>
-        </div>
-        </body>
-        </html>""", width=200, height=200)
-    

@@ -66,30 +66,32 @@ def scale_data(diab_df_cpy):
     return X
 
 
-def visualizer(diab_df_cpy):
-    fig=px.histogram(diab_df_cpy,x='Age',marginal='violin')
-    fig.update_layout(bargap=0.2)
-    fig.show()
-    sns.countplot(data=diab_df_cpy,x='Outcome',palette='coolwarm')
+def visualizer():
+    # fig=px.histogram(diab_df_cpy,x='Age',marginal='violin')
+    # fig.update_layout(bargap=0.2)
+    # fig.show()
+    # sns.countplot(data=diab_df_cpy,x='Outcome',palette='coolwarm')
 
-    fig=px.histogram(diab_df_cpy,x=diab_df_cpy[diab_df_cpy.Outcome==0].Age,marginal='box',title='Age distribution with outcome 0',color_discrete_sequence=['green'])
-    fig.update_layout(bargap=0.1)
-    fig.show()
+    # fig=px.histogram(diab_df_cpy,x=diab_df_cpy[diab_df_cpy.Outcome==0].Age,marginal='box',title='Age distribution with outcome 0',color_discrete_sequence=['green'])
+    # fig.update_layout(bargap=0.1)
+    # fig.show()
 
-    fig=px.histogram(diab_df_cpy,x=diab_df_cpy[diab_df_cpy.Outcome==1].Age,marginal='box',title='Age distribution with outcome 1',color_discrete_sequence=['darkred'])
-    fig.update_layout(bargap=0.1)
-    fig.show()
-
-
-    fig = px.box(diab_df_cpy, y="Pregnancies", x="Outcome")
-    fig.show()
+    # fig=px.histogram(diab_df_cpy,x=diab_df_cpy[diab_df_cpy.Outcome==1].Age,marginal='box',title='Age distribution with outcome 1',color_discrete_sequence=['darkred'])
+    # fig.update_layout(bargap=0.1)
+    # fig.show()
 
 
-    plt.subplots(figsize=(15,10))
-    sns.boxplot(x='Age', y='BMI', data=diab_df_cpy)
-    plt.show()
+    # fig = px.box(diab_df_cpy, y="Pregnancies", x="Outcome")
+    # fig.show()
 
+
+    # plt.subplots(figsize=(15,10))
+    # sns.boxplot(x='Age', y='BMI', data=diab_df_cpy)
+    # plt.show()
+
+    plt.figure(figsize = (25,50))
     data_plot = sns.lmplot('Insulin','Age',data = diab_df_cpy, hue = 'Outcome',fit_reg = 'False')
+    plt.savefig("images/plot.png")
 
 # ## Split the X and Y variables
 
@@ -192,7 +194,7 @@ def vis_rf(model,y_pred_rfc,perm):
         # st.pyplot(heat_mp_rfc)
         roc_plot(model)
     elif perm == 1:
-        f_imp_plot = plt.figure(figsize = (65,50))
+        f_imp_plot = plt.figure(figsize = (70,50))
         pd.Series(rfc_cros_valid.feature_importances_,index = X_train.columns).plot(kind = 'barh',fontsize = 80)
         #st.pyplot(f_imp_plot)
         plt.savefig("pages/images/f_imp.png")
@@ -228,72 +230,6 @@ def hyper_param_model(model):
     pickle.dump(rfc_cros_valid,pickle_rf)
     pickle_rf.close()
     return rfc_cros_valid
-
-# # BEST PARAMETER
-# 
-# # Pass - 1
-# 
-# ### MAX DEPTH = 27 
-# ### Min_Samples_Leaf = 1 
-# 
-# ### Accuracy = 99% with 2 params
-# 
-# # Pass- 2
-# 
-# ### MAX LEAF MODES = 69
-# ### ACC = 91.5%
-# 
-# # Pass-3
-# 
-# ### MAX LEAF NODES = 80 when range from 60 to 81
-# ### ACC = 94%
-# 
-# # Pass-4
-# 
-# ### MAX LEAF NODES = 100 when range from 80 to 101
-# ### ACC = 95.5%
-# 
-# 
-# # Pass-5
-# ### MAX_LEAF NODES = 116 when range from 100-121
-# ### ACC = 97.25%
-# 
-# 
-# # Pass-6
-# ### MAX_LEAF_NODES = 126 when range from 110-131
-# ### ACC = 98.0%
-# 
-# # PASS - 7
-# 
-# ### MAX_LEAF_NODES = 144 when range from 120 to 151
-# ### ACC = 99%
-# 
-# # PASS - 8
-# 
-# ### MAX_LEAF_NODES = 154 when range from 140 to 161
-# ### ACC = 99% [SAME AS PREV]
-# 
-# 
-# ## PASS - 9 [MAXIMUM EFFICIENCY]
-# 
-# ### MAX_LEAF_NODES = 169 when range from 150 to 181
-# ### ACC = 99.25%
-# 
-# 
-# ## PASS - 11 [MAX - 2]
-# 
-# ### MAX_LEAF_NODES = 163 when range from 160 to 171
-# ### ACC = 99.25%
-# 
-# # PASS - 10 [Reached Peak and Crossed Maxima]
-# 
-# ### MAX_LEAF_NODES = 180 when range from 160 to 191
-# ### ACC = 98.25% [LOW]
-# 
-# 
-# 
-
-# # Cross Validation
 
 # ## 3. Logistic Regression
 
@@ -338,7 +274,7 @@ def vis_logreg(model,predicted):
 
 def hyper_logreg(model):
     c_space = np.logspace(-1,2,15)
-    param_grid = {'solver':['newton-cg', 'lbfgs', 'liblinear'],'C':c_space}
+    param_grid = {'solver':['newton-cg', 'lbfgs'],'C':c_space}
     log_reg_cv = GridSearchCV(model,param_grid,cv = 5)
     log_reg_cv.fit(X_train,Y_train_arr)
     print("Validation Accuracy of improved model = {}".format(log_reg_cv.best_score_*100))
@@ -359,7 +295,7 @@ def sv_classifier():
     x_train_svc,x_test_svc,y_train_svc,y_test_svc = train_test_split(x,y,test_size = 0.2,random_state = 8)
     # x_train_svc,x_test_svc,y_train_svc,y_test_svc = train_test_split(diab_df_cpy_up,diab_df_cpy_up.iloc[:,-1:],test_size = 0.2,random_state=8)
     # print(x_train_svc)
-    diab_df_cpy = scale_data(diab_df_cpy_up)
+    # diab_df_cpy = scale_data(diab_df_cpy_up)
     y_train_arr_svc = y_train_svc['Outcome'].ravel()
     classifier = SVC(kernel = 'rbf',probability = True)
     classifier.fit(x_train_svc,y_train_arr_svc)
