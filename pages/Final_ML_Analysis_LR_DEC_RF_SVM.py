@@ -66,32 +66,6 @@ def scale_data(diab_df_cpy):
     return X
 
 
-def visualizer():
-    # fig=px.histogram(diab_df_cpy,x='Age',marginal='violin')
-    # fig.update_layout(bargap=0.2)
-    # fig.show()
-    # sns.countplot(data=diab_df_cpy,x='Outcome',palette='coolwarm')
-
-    # fig=px.histogram(diab_df_cpy,x=diab_df_cpy[diab_df_cpy.Outcome==0].Age,marginal='box',title='Age distribution with outcome 0',color_discrete_sequence=['green'])
-    # fig.update_layout(bargap=0.1)
-    # fig.show()
-
-    # fig=px.histogram(diab_df_cpy,x=diab_df_cpy[diab_df_cpy.Outcome==1].Age,marginal='box',title='Age distribution with outcome 1',color_discrete_sequence=['darkred'])
-    # fig.update_layout(bargap=0.1)
-    # fig.show()
-
-
-    # fig = px.box(diab_df_cpy, y="Pregnancies", x="Outcome")
-    # fig.show()
-
-
-    # plt.subplots(figsize=(15,10))
-    # sns.boxplot(x='Age', y='BMI', data=diab_df_cpy)
-    # plt.show()
-
-    plt.figure(figsize = (25,50))
-    data_plot = sns.lmplot('Insulin','Age',data = diab_df_cpy, hue = 'Outcome',fit_reg = 'False')
-    plt.savefig("images/plot.png")
 
 # ## Split the X and Y variables
 
@@ -105,8 +79,8 @@ def split_train_test(diab_df_cpy):
     column_lis = list(diab_df_cpy.columns[:-1])
 
     ### SMOTE ANALYSIS FOR IMBALANCED DATASET
-    print("Percentage of Positive Values in training data before Smote :",Y_train.value_counts(normalize=True)[1]/(Y_train.value_counts(normalize=True)[0]+Y_train.value_counts(normalize=True)[1])*100,"%")
-    print("Percentage of Negative Values in training data before Smote :",Y_train.value_counts(normalize=True)[0]/(Y_train.value_counts(normalize=True)[0]+Y_train.value_counts(normalize=True)[1])*100,"%")
+    # print("Percentage of Positive Values in training data before Smote :",Y_train.value_counts(normalize=True)[1]/(Y_train.value_counts(normalize=True)[0]+Y_train.value_counts(normalize=True)[1])*100,"%")
+    # print("Percentage of Negative Values in training data before Smote :",Y_train.value_counts(normalize=True)[0]/(Y_train.value_counts(normalize=True)[0]+Y_train.value_counts(normalize=True)[1])*100,"%")
 
     smote = SMOTE()
     X_train,Y_train = smote.fit_resample(X_train,Y_train)
@@ -118,7 +92,37 @@ diab_df = scale_data(diab_df_cpy)
 X_train,Y_train,X_test,Y_test = split_train_test(diab_df_cpy)
 
 
+def visualizer():
+    plt.subplots(figsize = (15,10))
+    fig=px.histogram(diab_df_cpy,x='Age',marginal='violin')
+    fig.update_layout(bargap=0.2)
+    sns.countplot(data=diab_df_cpy,x='Outcome',palette='coolwarm')
+    plt.savefig("pages/images/age.png")
+
+
+    plt.subplots(figsize = (15,10))
+    fig=px.histogram(diab_df_cpy,x=diab_df_cpy[diab_df_cpy.Outcome==0].Age,marginal='box',title='Age distribution with outcome 0',color_discrete_sequence=['green'])
+    fig.update_layout(bargap=0.1)
+    plt.savefig("pages/images/age_outcome.png")
+
+    # fig=px.histogram(diab_df_cpy,x=diab_df_cpy[diab_df_cpy.Outcome==1].Age,marginal='box',title='Age distribution with outcome 1',color_discrete_sequence=['darkred'])
+    # fig.update_layout(bargap=0.1)
+    # fig.show()
+
+
+    plt.subplots(figsize=(15,10))
+    sns.boxplot(x='Age', y='BMI', data=diab_df_cpy)
+    plt.savefig("pages/images/comparison.png")
+
+
+    plt.figure(figsize = (25,50))
+    data_plot = sns.lmplot('Insulin','Age',data = diab_df_cpy, hue = 'Outcome',fit_reg = 'False')
+    plt.savefig("pages/images/plot_age_bmi.png")
+
+res = dict.fromkeys(['Random Forest','Decision Tree','Logistic Regression','SVC'])
+
 def dtree_classifier():
+    print("----------DTREE CLASSIFIER---------")
     column_lis = X_train.columns
     dtree = DecisionTreeClassifier(max_depth = 15,random_state = 0, 
                                 min_samples_split = 2)
@@ -126,6 +130,8 @@ def dtree_classifier():
     Y_pred = dtree.predict(X_test)
     #Change using streamlit lib
     accu_score_dtree = metrics.accuracy_score(Y_test,Y_pred)*100
+    print("Validation Accuracy of Decision Tree Classifier = {}".format(accu_score_dtree))
+    res['Decision Tree'] = accu_score_dtree
     vis_dtree(dtree,Y_pred)
     pickle_dt = open("dtree_classifier.pkl",mode = "wb")
     pickle.dump(dtree,pickle_dt)
@@ -170,6 +176,7 @@ def rf_classifier(perm):
     print("RFC Score = {}%".format(rfc.score(X_test,Y_test)*100))
     y_pred_rfc = rfc_cv.predict(X_test)
     test_accu_score = metrics.accuracy_score(Y_test,y_pred_rfc)*100
+
     print("Validation Accuracy of Random Forest Classifier = {}".format(test_accu_score))
     y_train_rfc = rfc_cv.predict(X_train)
     print("TRAINING Accuracy Score = {}".format(metrics.accuracy_score(Y_train,y_train_rfc)*100))
@@ -182,9 +189,9 @@ def vis_rf(model,y_pred_rfc,perm):
     print(report_rfc)
     rfc_cros_valid = hyper_param_model(model)
     y_pred_rfc_cv = rfc_cros_valid.predict(X_test)
-    
-    print("Accuracy Score:- {}%".format(metrics.accuracy_score(Y_test,y_pred_rfc_cv)*100))
-
+    test_accu_score_rf = metrics.accuracy_score(Y_test,y_pred_rfc_cv)*100
+    res['Random Forest'] = test_accu_score_rf
+    print("Accuracy Score:- {}%".format(test_accu_score_rf))
     print("Training Accuracy Score = {}%".format(metrics.accuracy_score(Y_train,rfc_cros_valid.predict(X_train))*100))
     mat_rfc_cros_valid = confusion_matrix(Y_test,y_pred_rfc_cv)
     if perm == 0:
@@ -194,8 +201,8 @@ def vis_rf(model,y_pred_rfc,perm):
         # st.pyplot(heat_mp_rfc)
         roc_plot(model)
     elif perm == 1:
-        f_imp_plot = plt.figure(figsize = (70,50))
-        pd.Series(rfc_cros_valid.feature_importances_,index = X_train.columns).plot(kind = 'barh',fontsize = 80)
+        f_imp_plot = plt.figure(figsize = (100,50))
+        pd.Series(rfc_cros_valid.feature_importances_,index = X_train.columns).plot(kind = 'barh',fontsize = 100)
         #st.pyplot(f_imp_plot)
         plt.savefig("pages/images/f_imp.png")
     return
@@ -241,6 +248,7 @@ def log_regression():
     log_reg_cv = hyper_logreg(log_reg)
     predicted=log_reg_cv.predict(X_test)
     test_accu_score = metrics.accuracy_score(Y_test,predicted)*100
+    res['Logistic Regression'] = test_accu_score
     vis_logreg(log_reg,predicted)
     return 1
 
@@ -311,6 +319,7 @@ def sv_classifier():
     print(classification_report(y_test_svc['Outcome'],grid_prediction))
     test_accu_score_svc = accuracy_score(y_test_svc['Outcome'], grid_prediction)*100
     print("Validation Accuracy Score [SVC] = {}%".format(test_accu_score_svc))
+    res['SVC'] = test_accu_score_svc
     # roc_plot(grid_cv)
     pickle_svm = open("svc_classifier.pkl",mode = "wb")
     pickle.dump(grid_cv,pickle_svm)
@@ -318,9 +327,21 @@ def sv_classifier():
     return test_accu_score_svc
 
 
+def res_plot():
+    df_res = pd.DataFrame(res,index = [i for i in range(1)])
+    x = df_res.loc[0]
+    y = df_res.columns
+    plt.subplots(figsize = (15,10))
+    sns.barplot(x,y)
+    plt.savefig('pages/images/res_plot.png')
+    return 1
+
 
 if __name__ == "__main__":
+    visualizer()
     rf_classifier(0)
     log_regression()
     sv_classifier()
     dtree_classifier()
+    res_plot()
+

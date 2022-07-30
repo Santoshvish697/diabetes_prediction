@@ -3,3 +3,9 @@ Unit_Testing.ipynb
 svc.png
 _pycache_/
 .ipynb_checkpoints/
+node_modules/
+package-lock.json
+package.json
+.ipynb_checkpoints/
+.__pycache__/
+.Unit_Testing.ipynb

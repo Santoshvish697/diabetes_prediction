@@ -7,6 +7,8 @@ from Final_ML_Analysis_LR_DEC_RF_SVM import rf_classifier
 from Final_ML_Analysis_LR_DEC_RF_SVM import dtree_classifier, log_regression, sv_classifier
 from PIL import Image
 
+from Final_ML_Analysis_LR_DEC_RF_SVM import res_plot
+
 
 
 # st.title("Dashboard")
@@ -14,21 +16,28 @@ st.set_page_config(
     page_title="Dashboard", page_icon="📊", initial_sidebar_state="expanded"
 )
 
-# def max_width():
+main_bg = "pages/images/back"
+main_bg_ext = "png"
 
-#     max_width_str = f"max-width: 1400px;"
-#     st.markdown(
-#      f"""
-#     <style>
-#     .reportview-container .main .block-container{{
-#         {max_width_str}
-#     }}
-#     </style>    
-#     """,
-#         unsafe_allow_html=True,
-#     )
 
-# max_width()
+side_bg = "pages/images/back"
+side_bg_ext = "png"
+
+st.markdown(
+    """
+    <style>
+    body {
+        background: url(data:image/{main_bg_ext};base64,{base64.b64encode(open(main_bg, "rb").read()).decode()})
+    }
+
+    .sidebar .sidebar-content {
+    background: url(data:image/{side_bg_ext};base64,{base64.b64encode(open(side_bg, "rb").read()).decode()})
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 co1,co2,col3,col4 = st.columns([1,1,4,1])
 with col3:
         components.html("""<html>
@@ -62,12 +71,12 @@ st.write(
 """
 )
 
-left_column,mid_column,right_column = st.columns([2.5,1,8])
+left_column,mid_column,right_column = st.columns([15,5,5])
 
 if __name__ == "__main__":
 
     perm = 0
-    with left_column:
+    with right_column:
         st.subheader("ML Analysis")
         # if (rf_classifier(perm) == 1):
         st.markdown("***Random Forest Classifier***")
@@ -96,14 +105,25 @@ if __name__ == "__main__":
         st.image(image_dtree,caption = "Accuracy = 97.5%")
         # st.subheader("DTREE Classifier")
         print("DTREE SUCCESS!")
+
+    # if (res_plot() == 1):
+
     
-    with right_column:
+    with left_column:
         perm = 1
         st.subheader("Effect of health parameters on Diabetes")
-        # if rf_classifier(perm) == 1:
-        image_fimp = Image.open('pages/images/f_imp.png')
-        st.image(image_fimp)
+        if rf_classifier(perm) == 1:
+            image_fimp = Image.open('pages/images/f_imp.png')
+            st.image(image_fimp)
 
-        img_plot = Image.open('pages/images/plot.png')
+        img_plot = Image.open("pages/images/comparison.png")
         st.image(img_plot)
         print("SUCCESS!\n")
+
+        img_sec_plot = Image.open("pages/images/plot_age_bmi.png")
+        st.image(img_sec_plot)
+        print("SUCCESS!\n")
+
+        st.markdown("***RESULTS***")
+        image_res = Image.open('pages/images/res_plot.png')
+        st.image(image_res,caption = "Classifier Results")
