@@ -37,7 +37,7 @@ submit = st.button('Predict')
 if submit:
         prediction = svc.predict(sc_arr)
         if prediction == 0:
-            st.write('\nCongratulation',name,'You are not diabetic')
+            st.write ('Congratulation',name,'You are not diabetic!')
         else:
-            st.write("\nWe are really sorry to say but it seems like you are Diabetic.")
+            st.write("***We are really sorry to say but it seems like you are Diabetic.***")
 
