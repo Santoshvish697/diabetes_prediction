@@ -1,5 +1,5 @@
 pandas==1.4.3
-sklearn==0.22.1
+sklearn<1.1.1
 seaborn==0.11.2
 matplotlib==3.5.2
 imblearn==0.9.1
