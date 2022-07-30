@@ -16,27 +16,25 @@ st.set_page_config(
     page_title="Dashboard", page_icon="📊", initial_sidebar_state="expanded"
 )
 
-main_bg = "pages/images/back"
-main_bg_ext = "png"
 
-
-side_bg = "pages/images/back"
-side_bg_ext = "png"
-
-st.markdown(
-    """
+import base64
+def add_bg_from_local(image_file):
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    st.markdown(
+    f"""
     <style>
-    body {
-        background: url(data:image/{main_bg_ext};base64,{base64.b64encode(open(main_bg, "rb").read()).decode()})
-    }
-
-    .sidebar .sidebar-content {
-    background: url(data:image/{side_bg_ext};base64,{base64.b64encode(open(side_bg, "rb").read()).decode()})
-    }
+    .stApp {{
+        background-image: url(data:image/{"png"};base64,{encoded_string.decode()});
+        background-size: cover
+    }}
     </style>
     """,
     unsafe_allow_html=True
-)
+    )
+
+add_bg_from_local('pages/images/back.png')    
+    
 
 co1,co2,col3,col4 = st.columns([1,1,4,1])
 with col3:
@@ -92,7 +90,7 @@ if __name__ == "__main__":
         # st.subheader("Logistic Regression") 
         print("LOG REG SUCESS!\n")
 
-    # if (sv_classifier() == 1):
+        # if (sv_classifier() == 1):
         st.markdown("***SVC Classifier***")
         image_svc = Image.open('pages/images/svc.png')
         st.image(image_svc,caption = "Accuracy = 99.43%")
@@ -106,15 +104,14 @@ if __name__ == "__main__":
         # st.subheader("DTREE Classifier")
         print("DTREE SUCCESS!")
 
-    # if (res_plot() == 1):
 
     
     with left_column:
         perm = 1
         st.subheader("Effect of health parameters on Diabetes")
-        if rf_classifier(perm) == 1:
-            image_fimp = Image.open('pages/images/f_imp.png')
-            st.image(image_fimp)
+        # if rf_classifier(perm) == 1:
+        image_fimp = Image.open('pages/images/f_imp.png')
+        st.image(image_fimp)
 
         img_plot = Image.open("pages/images/comparison.png")
         st.image(img_plot)
@@ -125,5 +122,6 @@ if __name__ == "__main__":
         print("SUCCESS!\n")
 
         st.markdown("***RESULTS***")
+        # if (res_plot() == 1):
         image_res = Image.open('pages/images/res_plot.png')
         st.image(image_res,caption = "Classifier Results")

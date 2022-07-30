@@ -33,6 +33,7 @@ from sklearn.metrics import accuracy_score
 
 import streamlit.components.v1 as components
 import streamlit as st
+import plotly.express as px
 
 # ## Acquiring Data
 df=pd.DataFrame(pd.read_excel("diabetes-dataset.xlsx"))
@@ -141,7 +142,7 @@ def dtree_classifier():
 def vis_dtree(model,Y_pred):
     column_lis = X_train.columns
     conf_mat = confusion_matrix(Y_test,Y_pred)
-    plt.figure(figsize = (25,20))
+    plt.figure(figsize = (25,25))
     heat_dtree = sns.heatmap(conf_mat,annot = True,annot_kws={"fontsize":75})
     plt.savefig("pages/images/heat_dtree.png")
     # st.pyplot(heat_dtree)
@@ -195,7 +196,7 @@ def vis_rf(model,y_pred_rfc,perm):
     print("Training Accuracy Score = {}%".format(metrics.accuracy_score(Y_train,rfc_cros_valid.predict(X_train))*100))
     mat_rfc_cros_valid = confusion_matrix(Y_test,y_pred_rfc_cv)
     if perm == 0:
-        heat_mp_rfc = plt.figure(figsize = (25,20))
+        heat_mp_rfc = plt.figure(figsize = (25,25))
         sns.heatmap(mat_rfc_cros_valid,annot = True,annot_kws={"fontsize":75})
         plt.savefig("pages/images/heat_rfc.png")
         # st.pyplot(heat_mp_rfc)
@@ -256,7 +257,7 @@ def vis_logreg(model,predicted):
     Y_train_arr = Y_train['Outcome'].ravel()
 
     cf_matrix = confusion_matrix(Y_test,predicted)
-    heat_logreg= plt.figure(figsize = (25,20))
+    heat_logreg= plt.figure(figsize = (25,25))
     sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
                 fmt='.2%', cmap='Blues',annot_kws={"fontsize":75})
     #st.pyplot(heat_logreg)
@@ -273,10 +274,10 @@ def vis_logreg(model,predicted):
     features.set_index('Features', inplace=True)
     features.importance.plot(kind='barh', figsize=(11, 6),color = features.positive.map({True: 'blue', False: 'red'}))
     plt.xlabel('Importance')
-    log_reg_cv = hyper_logreg(model)
-    roc_plot(log_reg_cv)
+    # log_reg_cv = hyper_logreg(model)
+    roc_plot(model)
     pickle_lr = open("logreg.pkl",mode = "wb")
-    pickle.dump(log_reg_cv,pickle_lr)
+    pickle.dump(model,pickle_lr)
     pickle_lr.close()
     return
 
@@ -332,10 +333,10 @@ def res_plot():
     x = df_res.loc[0]
     y = df_res.columns
     plt.subplots(figsize = (15,10))
+    sns.set(font_scale = 15)
     sns.barplot(x,y)
     plt.savefig('pages/images/res_plot.png')
     return 1
-
 
 if __name__ == "__main__":
     visualizer()
