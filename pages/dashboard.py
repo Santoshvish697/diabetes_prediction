@@ -13,7 +13,7 @@ from Final_ML_Analysis_LR_DEC_RF_SVM import res_plot
 
 # st.title("Dashboard")
 st.set_page_config(
-    page_title="Dashboard", page_icon="📊", initial_sidebar_state="expanded"
+    page_title="Dashboard", initial_sidebar_state="expanded"
 )
 
 

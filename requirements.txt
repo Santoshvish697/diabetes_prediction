@@ -5,4 +5,4 @@ matplotlib==3.5.2
 imblearn<0.9.1
 streamlit<1.11.0
 plotly<5.9.0
-
+numpy<1.22.3
