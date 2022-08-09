@@ -9,3 +9,7 @@ package.json
 .ipynb_checkpoints/
 .__pycache__/
 .Unit_Testing.ipynb
+rf_classifier.pkl
+svc_classifier.pkl
+logreg.pkl
+dtree_classifier.pkl

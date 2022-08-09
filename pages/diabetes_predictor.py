@@ -3,15 +3,55 @@ import pandas as pd
 import os
 from Final_ML_Analysis_LR_DEC_RF_SVM import *
 import fontstyle
-from datetime import date
+import datetime
 
 
-# pickle_in = open('rf_classifier.pkl','rb')
-# classifier = pickle.load(pickle_in)
+#Add Background
+import base64
+def add_bg_from_local(image_file):
+    with open(image_file, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image: url(data:image/{"png"};base64,{encoded_string.decode()});
+        background-size: cover
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+    )
 
-pickle_svc = open('svc_classifier.pkl','rb')
+add_bg_from_local('diab-predictor-dashboard/pages/images/back.png')    
+
+#Save ML Model 
+pickle_svc = open('diab-predictor-dashboard/svc_classifier.pkl','rb')
 svc = pickle.load(pickle_svc)
 
+x = [datetime.datetime.now() + datetime.timedelta(days=i) for i in range(30)]
+
+df_glucose = pd.DataFrame({'DateTime': x,
+'Glucose': 0},columns = ["DateTime","Glucose"],index = [x for x in range(30)])
+
+def append_df(df,count,val):
+    count = count + 1
+    df.loc[count,'Glucose'] = val
+    plot_glucose(df)
+    return count
+
+def plot_glucose(df):
+    fig = px.line(df,x = "DateTime",y = "Glucose")
+    fig.write_html("diab-predictor-dashboard/pages/graph.html")
+    return
+
+    
+#Global Variable
+cur = 0
+count = -1
+flag = 1
+
+#Form Elements
 st.title('Diabetes Predictor')
 name = st.text_input("Name:")
 
@@ -35,9 +75,13 @@ sc_arr = input_arr.reshape(1,8)
 
 submit = st.button('Predict')
 if submit:
-        prediction = svc.predict(sc_arr)
-        if prediction == 0:
-            st.write ('Congratulation',name,'You are not diabetic!')
-        else:
-            st.write("***We are really sorry to say but it seems like you are Diabetic.***")
+    count = count+1
+    prediction = svc.predict(sc_arr)
+    if prediction == 0:
+        st.write ('Congratulation',name,'You are not diabetic!')
+    else:
+        st.write("***We are really sorry to say but it seems like you are Diabetic.***")
+    
+    cur = append_df(df_glucose,count,glucose) 
+    count = count+1
 

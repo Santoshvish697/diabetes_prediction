@@ -36,7 +36,7 @@ import streamlit as st
 import plotly.express as px
 
 # ## Acquiring Data
-df=pd.DataFrame(pd.read_excel("diabetes-dataset.xlsx"))
+df=pd.DataFrame(pd.read_excel("diab-predictor-dashboard/pages/diabetes-dataset.xlsx"))
 
 def prepare_data(df):
     print(df.describe)
@@ -98,13 +98,13 @@ def visualizer():
     fig=px.histogram(diab_df_cpy,x='Age',marginal='violin')
     fig.update_layout(bargap=0.2)
     sns.countplot(data=diab_df_cpy,x='Outcome',palette='coolwarm')
-    plt.savefig("pages/images/age.png")
+    plt.savefig("diab-predictor-dashboard/pages/images/age.png")
 
 
     plt.subplots(figsize = (15,10))
     fig=px.histogram(diab_df_cpy,x=diab_df_cpy[diab_df_cpy.Outcome==0].Age,marginal='box',title='Age distribution with outcome 0',color_discrete_sequence=['green'])
     fig.update_layout(bargap=0.1)
-    plt.savefig("pages/images/age_outcome.png")
+    plt.savefig("diab-predictor-dashboard/pages/images/age_outcome.png")
 
     # fig=px.histogram(diab_df_cpy,x=diab_df_cpy[diab_df_cpy.Outcome==1].Age,marginal='box',title='Age distribution with outcome 1',color_discrete_sequence=['darkred'])
     # fig.update_layout(bargap=0.1)
@@ -113,12 +113,12 @@ def visualizer():
 
     plt.subplots(figsize=(15,10))
     sns.boxplot(x='Age', y='BMI', data=diab_df_cpy)
-    plt.savefig("pages/images/comparison.png")
+    plt.savefig("diab-predictor-dashboard/pages/images/comparison.png")
 
 
     plt.figure(figsize = (25,50))
     data_plot = sns.lmplot('Insulin','Age',data = diab_df_cpy, hue = 'Outcome',fit_reg = 'False')
-    plt.savefig("pages/images/plot_age_bmi.png")
+    plt.savefig("diab-predictor-dashboard/pages/images/plot_age_bmi.png")
 
 res = dict.fromkeys(['Random Forest','Decision Tree','Logistic Regression','SVC'])
 
@@ -144,7 +144,7 @@ def vis_dtree(model,Y_pred):
     conf_mat = confusion_matrix(Y_test,Y_pred)
     plt.figure(figsize = (25,25))
     heat_dtree = sns.heatmap(conf_mat,annot = True,annot_kws={"fontsize":75})
-    plt.savefig("pages/images/heat_dtree.png")
+    plt.savefig("diab-predictor-dashboard/pages/images/heat_dtree.png")
     # st.pyplot(heat_dtree)
     plt.figure(figsize = (15,10))
     pd.Series(model.feature_importances_,index = column_lis).plot(kind = 'barh')
@@ -198,14 +198,15 @@ def vis_rf(model,y_pred_rfc,perm):
     if perm == 0:
         heat_mp_rfc = plt.figure(figsize = (25,25))
         sns.heatmap(mat_rfc_cros_valid,annot = True,annot_kws={"fontsize":75})
-        plt.savefig("pages/images/heat_rfc.png")
+        plt.savefig("diab-predictor-dashboard/pages/images/heat_rfc.png")
         # st.pyplot(heat_mp_rfc)
         roc_plot(model)
     elif perm == 1:
         f_imp_plot = plt.figure(figsize = (100,50))
-        pd.Series(rfc_cros_valid.feature_importances_,index = X_train.columns).plot(kind = 'barh',fontsize = 100)
+        ax = pd.Series(rfc_cros_valid.feature_importances_,index = X_train.columns).plot(kind = 'barh',fontsize = 100,color = "red")
+        ax.set_yticklabels(["Age","PedigreeFunction","BMI","Insulin","SkinThickness","BloodPressure","Glucose","Pregnancies"])
         #st.pyplot(f_imp_plot)
-        plt.savefig("pages/images/f_imp.png")
+        plt.savefig("diab-predictor-dashboard/pages/images/f_imp.png")
     return
 
 def roc_plot(model):
@@ -261,7 +262,7 @@ def vis_logreg(model,predicted):
     sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, 
                 fmt='.2%', cmap='Blues',annot_kws={"fontsize":75})
     #st.pyplot(heat_logreg)
-    plt.savefig('pages/images/log_reg.png')
+    plt.savefig('diab-predictor-dashboard/pages/images/log_reg.png')
 
     #Plot results comparison graph
     coeff = list(model.coef_[0])
@@ -314,11 +315,11 @@ def sv_classifier():
     grid.fit(x_train_svc,y_train_arr_svc)
     grid_cv = grid.best_estimator_
     grid_prediction = grid_cv.predict(x_test_svc)
-    mat_svm = confusion_matrix(y_test_svc['Outcome'],grid_prediction)
+    mat_svm = confusion_matrix(y_test_svc['Outcome'].values,grid_prediction)
     plt.figure(figsize = (7,5))
     sns.heatmap(mat_svm,annot = True)
-    print(classification_report(y_test_svc['Outcome'],grid_prediction))
-    test_accu_score_svc = accuracy_score(y_test_svc['Outcome'], grid_prediction)*100
+    print(classification_report(y_test_svc['Outcome'].values,grid_prediction))
+    test_accu_score_svc = accuracy_score(y_test_svc['Outcome'].values, grid_prediction)*100
     print("Validation Accuracy Score [SVC] = {}%".format(test_accu_score_svc))
     res['SVC'] = test_accu_score_svc
     # roc_plot(grid_cv)
@@ -335,12 +336,12 @@ def res_plot():
     plt.subplots(figsize = (15,10))
     sns.set(font_scale = 15)
     sns.barplot(x,y)
-    plt.savefig('pages/images/res_plot.png')
+    plt.savefig('diab-predictor-dashboard/pages/images/res_plot.png')
     return 1
 
 if __name__ == "__main__":
     visualizer()
-    rf_classifier(0)
+    rf_classifier(1)
     log_regression()
     sv_classifier()
     dtree_classifier()
