@@ -36,7 +36,7 @@ import streamlit as st
 import plotly.express as px
 
 # ## Acquiring Data
-df=pd.DataFrame(pd.read_excel("diab-predictor-dashboard/pages/diabetes-dataset.xlsx"))
+df=pd.DataFrame(pd.read_excel("diabetes-dataset.xlsx"))
 
 def prepare_data(df):
     print(df.describe)
